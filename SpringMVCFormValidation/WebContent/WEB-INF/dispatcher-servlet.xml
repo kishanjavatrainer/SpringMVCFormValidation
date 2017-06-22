@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   http://www.springframework.org/schema/mvc
+   http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<mvc:annotation-driven />
+
+	<context:component-scan base-package="com.infotech.controller"></context:component-scan>
+	<context:component-scan base-package="com.infotech.service.impl"></context:component-scan>
+	<context:component-scan base-package="com.infotech.dao.impl"></context:component-scan>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/view/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${driver.class.name}"></property>
+		<property name="url" value="${db.url}"></property>
+		<property name="username" value="${db.username}"></property>
+		<property name="password" value="${db.password}"></property>
+	</bean>
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="checkWriteOperations" value="false"></property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+
+		<property name="annotatedClasses">
+			<array>
+				<value>com.infotech.model.Student</value>
+			</array>
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<array>
+				<value>/WEB-INF/database.properties</value>
+			</array>
+		</property>
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/messages"></property>
+	</bean>
+</beans>
